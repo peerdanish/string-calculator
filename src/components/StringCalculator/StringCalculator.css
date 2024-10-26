@@ -1,0 +1,18 @@
+
+.calculate-btn{
+	padding: .5rem;
+	background-color: #0074D9;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	margin-left: 10px;
+}
+.string-input{
+	padding: .5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+.error{
+	color: red;
+}
