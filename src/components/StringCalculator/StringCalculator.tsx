@@ -18,6 +18,12 @@ export function StringCalculator() {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleCalculate();
+    }
+  };
+
   return (
     <div>
       <input
@@ -26,6 +32,7 @@ export function StringCalculator() {
         onChange={(e) => setInput(e.target.value)}
         placeholder="Enter numbers"
         className="string-input"
+        onKeyDown={handleKeyDown}
       />
       <button onClick={handleCalculate} className="calculate-btn">
         Calculate
