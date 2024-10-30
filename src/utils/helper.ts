@@ -12,6 +12,7 @@ export const add = (numbers: string) => {
   if (numbers.startsWith(DELIMITER.CUSTOM_DELIMITER)) {
     const parts = numbers.split(DELIMITER.NEWLINE);
     delimiter = new RegExp(extractDelimiters(parts[0]));
+
     numbers = numbers.slice(parts[0].length + 1);
   }
 
@@ -22,6 +23,15 @@ export const add = (numbers: string) => {
       `${ERROR_MESSAGE.NEGATIVE_INPUT} ${negatives.join(DELIMITER.COMMA)}`
     );
   }
+  let multpliedNum = 0;
+  if (delimiter.source === "[*]|\\n") {
+    multpliedNum = nums.reduce((sum, num) => {
+      return sum * num;
+    }, 1);
+
+    return multpliedNum;
+  }
+
   const sum = nums.reduce((sum, num) => {
     if (num > 1000) {
       return sum;
@@ -37,8 +47,8 @@ export const add = (numbers: string) => {
 };
 
 const extractDelimiters = (numbers: string) => {
-  const myvar = numbers.slice(2);
-  const delimiterArr = myvar.split(/[\\[\]]/).filter((item) => item !== "");
+  const delimiter = numbers.slice(2);
+  const delimiterArr = delimiter.split(/[\\[\]]/).filter((item) => item !== "");
   const delimiters = "[" + delimiterArr.join("|") + `]|${DELIMITER.NEWLINE}`;
   return delimiters;
 };
