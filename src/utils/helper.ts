@@ -3,52 +3,52 @@ import {
   DELIMITER,
   ERROR_MESSAGE,
 } from "@/global/constants";
+import { OperationType } from "./type";
 
-export const add = (numbers: string) => {
-  if (!numbers) return 0;
-  numbers = numbers.replace(/\\n/g, "\n");
-  let delimiter = DEFAULT_DELIMITER;
 
-  if (numbers.startsWith(DELIMITER.CUSTOM_DELIMITER)) {
-    const parts = numbers.split(DELIMITER.NEWLINE);
-    delimiter = new RegExp(extractDelimiters(parts[0]));
+export const calculate = (input: string) => {
+  if (!input) return 0;
+  let delimiterPattern = DEFAULT_DELIMITER;
+  let operationMode: OperationType = "add";
 
-    numbers = numbers.slice(parts[0].length + 1);
+  if (input.startsWith(DELIMITER.CUSTOM_DELIMITER)) {
+    const parts = input.split(DELIMITER.NEWLINE);
+    const delimiterString = parts[0].slice(2);
+    delimiterPattern = new RegExp(parseDelimiters(delimiterString));
+    operationMode = delimiterString === DELIMITER.ASTERISK ? "multiply" : "add";
+    input = input.slice(parts[0].length + 1);
   }
 
-  const nums = numbers.split(delimiter).map(Number);
-  const negatives = nums.filter((n) => n < 0);
-  if (negatives.length) {
+  const parsedNumbers = input.split(delimiterPattern).map(Number);
+  const negativeNumbers = parsedNumbers.filter((n) => n < 0);
+  if (negativeNumbers.length) {
     throw new Error(
-      `${ERROR_MESSAGE.NEGATIVE_INPUT} ${negatives.join(DELIMITER.COMMA)}`
+      `${ERROR_MESSAGE.NEGATIVE_INPUT} ${negativeNumbers.join(DELIMITER.COMMA)}`
     );
   }
-  let multpliedNum = 0;
-  if (delimiter.source === "[*]|\\n") {
-    multpliedNum = nums.reduce((sum, num) => {
-      return sum * num;
-    }, 1);
+  const result = calculateResult(parsedNumbers, operationMode);
 
-    return multpliedNum;
-  }
-
-  const sum = nums.reduce((sum, num) => {
-    if (num > 1000) {
-      return sum;
-    }
-    return sum + num;
-  }, 0);
-
-  if (isNaN(sum)) {
+  if (isNaN(result)) {
     throw new Error(ERROR_MESSAGE.INVALID_INPUT);
   }
 
-  return sum;
+  return result;
 };
 
-const extractDelimiters = (numbers: string) => {
-  const delimiter = numbers.slice(2);
-  const delimiterArr = delimiter.split(/[\\[\]]/).filter((item) => item !== "");
-  const delimiters = "[" + delimiterArr.join("|") + `]|${DELIMITER.NEWLINE}`;
-  return delimiters;
+const calculateResult = (numbers: number[], mode: OperationType) => {
+  switch (mode) {
+    case "multiply":
+      return numbers.reduce((product, num) => product * num, 1);
+    case "add":
+    default:
+      return numbers.reduce((total, num) => {
+        return num > 1000 ? total : total + num;
+      }, 0);
+  }
+};
+const parseDelimiters = (delimiterString: string) => {
+  const delimiters = delimiterString
+    .split(/[\\[\]]/)
+    .filter((item) => item !== "");
+  return "[" + delimiters.join("|") + `]|${DELIMITER.NEWLINE}`;
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { add } from "@/utils/helper";
+import { calculate } from "@/utils/helper";
 import "./StringCalculator.css";
 
 export function StringCalculator() {
@@ -11,7 +11,8 @@ export function StringCalculator() {
   const handleCalculate = () => {
     try {
       setError("");
-      const result = add(input);
+      const normalizedInput = input.replace(/\\n/g, "\n");
+      const result = calculate(normalizedInput);
       setResult(result);
     } catch (err) {
       setError((err as Error)?.message);

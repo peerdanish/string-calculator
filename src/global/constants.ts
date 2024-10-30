@@ -4,6 +4,7 @@ export const DELIMITER = {
 	COMMA: ",",
 	NEWLINE: "\n",
 	CUSTOM_DELIMITER: "//",
+	ASTERISK: "*"
 }
 export const ERROR_MESSAGE = {
 	INVALID_INPUT: "Invalid input",
